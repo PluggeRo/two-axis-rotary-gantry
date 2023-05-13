@@ -14,7 +14,7 @@ Motor::Motor(byte addr)
     Serial1.begin(38400);
 }
 
-void Motor::stop(int motorNr)
+void Motor::stop()
 {
     byte cmmd = 0xf7;
     byte tCHK = (motorAddr + cmmd) & 0xFF; //Checkbyte 
@@ -22,17 +22,13 @@ void Motor::stop(int motorNr)
 
     Serial1.write(signal, sizeof(signal));
 }
-void Motor::turn(int motorNr, int dir, int speed)
+void Motor::turn(int dir, int speed)
 {
+    byte cmmd = 0xf6;
 
-}
-void Motor::turnSteps(int motorNr, int dir, int speed, long steps)
-{
     byte dirAndSpeed = 0x00;
     //Bestimmung der Richtung
-    // direction = 1 ist gegen den Uhrzeigersinn
     byte cclkw = 0x80;
-    // direction = 0 ist im Uhrzeigersinn
     byte clkw = 0x00;
 
     if(dir == 0) 
@@ -44,8 +40,32 @@ void Motor::turnSteps(int motorNr, int dir, int speed, long steps)
         dirAndSpeed = dirAndSpeed | clkw;
     }
 
-    int speedNr = 5; //geschwindigkeit festlegen
-    byte speed = speedNr;
+    byte speed = speed;
+    dirAndSpeed = dirAndSpeed | speed;
+
+    byte tCHK = (motorAddr + cmmd + dirAndSpeed) & 0xFF; //Checkbyte 
+    byte signal[] = {motorAddr, cmmd, dirAndSpeed, tCHK}; 
+
+    Serial1.write(signal, sizeof(signal));
+
+}
+void Motor::turnSteps(int dir, int speed, long steps)
+{
+    byte dirAndSpeed = 0x00;
+    //Bestimmung der Richtung
+    byte cclkw = 0x80;
+    byte clkw = 0x00;
+
+    if(dir == 0) 
+    {
+        dirAndSpeed = dirAndSpeed | cclkw;
+    }
+    else
+    {
+        dirAndSpeed = dirAndSpeed | clkw;
+    }
+
+    byte speed = speed;
     dirAndSpeed = dirAndSpeed | speed;
 
     byte cmmd = 0xfd; //Kommande festlegen

@@ -11,9 +11,9 @@ class Motor
 {
     public:
         Motor(byte addr);
-        void stop(int motorNr);
-        void turn(int motorNr, int dir, int speed);
-        void turnSteps(int motorNr, int dir, int speed, long steps);
+        void stop();
+        void turn(int dir, int speed);
+        void turnSteps(int dir, int speed, long steps);
     private:
 
 };
