@@ -11,10 +11,10 @@ class Tower
 {
     public:
         Tower();
-        void turn(int direction, float angle);
-        void turnW(int direction, int& condition1);
-        void tilt(int direction, int angle);
-        void tiltW(int direction, int& condition2);
+        void turn(int direction, float angle, int speed);
+        void turnW(int direction, int& condition1, int speed);
+        void tilt(int direction, int angle, int speed);
+        void tiltW(int direction, int& condition2, int speed);
         void homeTurn();
         
     private:

@@ -56,7 +56,7 @@ Tower::Tower()
     pinMode(pinEndschalterTurn, INPUT);   
 }
 
-void Tower::turn(int direction, float angle)
+void Tower::turn(int direction, float angle, int speed)
 {
     int direction2;
 
@@ -84,17 +84,17 @@ void Tower::turn(int direction, float angle)
         direction2 = 0;
     }
 
-    motorV.turnSteps(direction, 15, stepsM1);
+    motorV.turnSteps(direction, speed, stepsM1);
 
-    motorH.turnSteps(direction2, 10, stepsM2);
+    motorH.turnSteps(direction2, speed, stepsM2);
     
     delay(1000); // adjust delay based on your motor's speed
 
 }
 
-void Tower::turnW(int direction, int& condition1)
+void Tower::turnW(int direction, int& condition1, int speed)
 {
-    motorV.turn(direction, 15);
+    motorV.turn(direction, speed);
     while(condition1 == 0)
     {
         refreshInputs();
@@ -103,7 +103,7 @@ void Tower::turnW(int direction, int& condition1)
     delay(1000);
 }
 
-void Tower::tilt(int direction, int angle)
+void Tower::tilt(int direction, int angle, int speed)
 {
     //Berechnung des Drehwinkels des Motors 2
     float winkelM2 = angle * iZeiger;
@@ -113,15 +113,15 @@ void Tower::tilt(int direction, int angle)
     float save2 = winkelM2 * stpPerA;
     long stepsM2 = save2;
 
-    motorH.turnSteps(direction, 15, stepsM2);
+    motorH.turnSteps(direction, speed, stepsM2);
 
     delay(1000); // adjust delay based on your motor's speed
     
 }
 
-void Tower::tiltW(int direction, int& condition2)
+void Tower::tiltW(int direction, int& condition2, int speed)
 {
-    motorH.turn(direction, 15);
+    motorH.turn(direction, speed);
     while(condition2 == 0)
     {
         refreshInputs();
@@ -138,10 +138,15 @@ void Tower::angleToStep(int angleS)
 
 void Tower::homeTurn()
 {
-    turnW(0, StatusEndschalterTurn);
-    tiltW(1, StatusEndschalterTiltO);
-    turn(1, 180);
-    tilt(0, 90);
+    turnW(0, StatusEndschalterTurn, 10);
+    turn(1, 10, 10);
+    turnW(0, StatusEndschalterTurn, 2);
+    tiltW(1, StatusEndschalterTiltO, 10);
+    tilt(0, 10, 15);
+    tiltW(1, StatusEndschalterTiltO, 2);
+
+    turn(1, 180, 15);
+    tilt(0, 90, 15);
     
 }
 
