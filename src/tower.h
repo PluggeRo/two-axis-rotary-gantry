@@ -14,7 +14,7 @@ class Tower
         void turn(int direction, float angle);
         void turnW(int direction, int& condition1);
         void tilt(int direction, int angle);
-        void tiltW(int direction, boolean condition2);
+        void tiltW(int direction, int& condition2);
         void homeTurn();
         
     private:

@@ -1,7 +1,7 @@
 #include <tower.h>
 
-Tower tower;
 
+Tower tower;
 //const int buttonPin1 = 52;  // the number of the pushbutton pin cclkw
 //const int buttonPin2 = 50;  // the number of the pushbutton pin clkw
 //const int buttonPin3 = 48;  // the number of the pushbutton pin up
@@ -15,6 +15,9 @@ Tower tower;
 
 
 void setup() {
+  //Kommunikation mit Rechner
+  Serial.begin(9600);
+
   //tower.turn(01, 180);
   //tower.tilt(00, 90);
   tower.homeTurn();

@@ -50,22 +50,22 @@ byte tCHKstopM2 = (addrM2 + cmmdStop) & 0xFF; //Checkbyte
 byte signalStopM2[] = {addrM2, cmmdStop, tCHKstopM2};
 
 //Endschalter Pins
-const int buttonPin1 = 22;  // Pin Nummer Endschalter Drehung um vertikal Achse
+const int pinEndschalterTurn = 22;  // Pin Nummer Endschalter Drehung um vertikal Achse
+const int pinEndschalterTiltO = 26;  // Pin Nummer Endschalter Drehung um horizontal Achse Oben
+const int pinEndschalterTiltU = 24;  // Pin Nummer Endschalter Drehung um horizontal Achse Unten
 
 //Schalter Variablen
-int buttonState1 = 0;  // variable for reading the pushbutton status
+int StatusEndschalterTurn = 0;  // variable for reading the pushbutton status
+int StatusEndschalterTiltO = 0;  // variable for reading the pushbutton status
+int StatusEndschalterTiltU = 0;  // variable for reading the pushbutton status
 
 
 Tower::Tower()
 {
     //Enable serial connection with motor
     Serial1.begin(38400);
-    //Serial.print("Kommunikation steht");
-    //byte signal1[] = {0xe0, 0xf3, 0x01, 0xd4};
-    //Serial1.write(signal1, sizeof(signal1));
-    //Serial.print("immer noch");
-    pinMode(buttonPin1, INPUT);   
-    //homeTurn();
+
+    pinMode(pinEndschalterTurn, INPUT);   
 }
 
 void Tower::turn(int direction, float angle)
@@ -140,10 +140,6 @@ void Tower::turn(int direction, float angle)
 
 void Tower::turnW(int direction, int& condition1)
 {
-    //Kommunikation mit Rechner
-    Serial.begin(9600);
-
-
     byte cmmdM1 = 0xf6;
     byte dirAndSpeedM1 = 0x00;
     byte dirAndSpeedM2 = 0x00;
@@ -171,13 +167,16 @@ void Tower::turnW(int direction, int& condition1)
     dirAndSpeedM1 = dirAndSpeedM1 | speed;
 
     dirAndSpeedM2 = dirAndSpeedM2 | speed;
-    byte tCHKM1 = (addrM1 + cmmdM1 + dirAndSpeedM1) & 0xFF; //Checkbyte 
-    byte signal1[] = {addrM1, cmmdM1, dirAndSpeedM1, tCHKM1}; 
+    byte tCHKTurn = (addrM1 + cmmdM1 + dirAndSpeedM1) & 0xFF; //Checkbyte 
+    byte signalTurn[] = {addrM1, cmmdM1, dirAndSpeedM1, tCHKTurn}; 
 
-    Serial1.write(signal1, sizeof(signal1));
-    Serial.print("immer noch");
+    
+    Serial.print("Test");
+    Serial1.write(signalTurn, sizeof(signalTurn));
+    Serial.print(condition1);
+    Serial.print("Start");
 
-    while(condition1 == 1)
+    while(condition1 == 0)
     {
 
         Serial.print(condition1);
@@ -185,6 +184,7 @@ void Tower::turnW(int direction, int& condition1)
 
     } 
 
+    Serial.print(" ende");
     Serial1.write(signalStopM1, sizeof(signalStopM1));
 
 }
@@ -239,9 +239,54 @@ void Tower::tilt(int direction, int angle)
     delay(1000); // adjust delay based on your motor's speed
 }
 
-void Tower::tiltW(int direction, boolean condition2)
+void Tower::tiltW(int direction, int& condition2)
 {
+    byte cmmdM2 = 0xf6;
+    byte dirAndSpeedM1 = 0x00;
+    byte dirAndSpeedM2 = 0x00;
 
+    //Bestimmung der Richtung
+    // direction = 1 ist gegen den Uhrzeigersinn: Bit = 0
+    byte cclkw = 0x80;
+    // direction = 0 ist im Uhrzeigersinn: Bit = 1
+    byte clkw = 0x00;
+
+    if(direction == 1) 
+    {
+        dirAndSpeedM1 = dirAndSpeedM1 | cclkw;
+        dirAndSpeedM2 = dirAndSpeedM2 | clkw;
+    }
+    else
+    {
+        dirAndSpeedM1 = dirAndSpeedM1 | clkw;
+        dirAndSpeedM2 = dirAndSpeedM2 | cclkw;
+    }
+
+    //Einstellen der verfahrgeschwindigkeit
+    int speedNr = 3;
+    byte speed = speedNr;
+    dirAndSpeedM1 = dirAndSpeedM1 | speed;
+
+    dirAndSpeedM2 = dirAndSpeedM2 | speed;
+    byte tCHKTilt = (addrM2 + cmmdM2 + dirAndSpeedM1) & 0xFF; //Checkbyte 
+    byte signalTurn[] = {addrM2, cmmdM2, dirAndSpeedM1, tCHKTilt}; 
+
+    
+    Serial.print("Test");
+    Serial1.write(signalTurn, sizeof(signalTurn));
+    Serial.print(condition2);
+    Serial.print("Start");
+
+    while(condition2 == 0)
+    {
+
+        Serial.print(condition2);
+        refreshInputs();
+
+    } 
+
+    Serial.print(" ende");
+    Serial1.write(signalStopM2, sizeof(signalStopM2));
 }
 
 void Tower::angleToStep(int angleS)
@@ -251,11 +296,16 @@ void Tower::angleToStep(int angleS)
 
 void Tower::homeTurn()
 {
-    turnW(1, buttonState1);
+    turnW(1, StatusEndschalterTurn);
+    tiltW(0, StatusEndschalterTiltO);
+    turn(1, 180);
+    tilt(0, 90);
 }
 
 void Tower::refreshInputs()
 {
-    buttonState1 = digitalRead(buttonPin1);
+    StatusEndschalterTurn = digitalRead(pinEndschalterTurn);
+    StatusEndschalterTiltO = digitalRead(pinEndschalterTiltO);
+    StatusEndschalterTiltU = digitalRead(pinEndschalterTiltU);
 }
 
