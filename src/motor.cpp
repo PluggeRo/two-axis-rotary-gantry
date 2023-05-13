@@ -1,12 +1,11 @@
 /*
     Motor.cpp - Library for controlling a Stepper Motor MKS Servo 42-C
 */
-//Penis
 
 #include "Arduino.h"
 #include "motor.h"
 
-byte motorAddr;
+
 
 Motor::Motor(byte addr)
 {
@@ -24,6 +23,8 @@ void Motor::stop()
 }
 void Motor::turn(int dir, int speed)
 {
+    Serial.print(" Adresse: ");
+    Serial.print(motorAddr);
     byte cmmd = 0xf6;
 
     byte dirAndSpeed = 0x00;
@@ -40,8 +41,8 @@ void Motor::turn(int dir, int speed)
         dirAndSpeed = dirAndSpeed | clkw;
     }
 
-    byte speed = speed;
-    dirAndSpeed = dirAndSpeed | speed;
+    byte speedByte = speed;
+    dirAndSpeed = dirAndSpeed | speedByte;
 
     byte tCHK = (motorAddr + cmmd + dirAndSpeed) & 0xFF; //Checkbyte 
     byte signal[] = {motorAddr, cmmd, dirAndSpeed, tCHK}; 
@@ -65,10 +66,10 @@ void Motor::turnSteps(int dir, int speed, long steps)
         dirAndSpeed = dirAndSpeed | clkw;
     }
 
-    byte speed = speed;
-    dirAndSpeed = dirAndSpeed | speed;
+    byte speedByte = speed;
+    dirAndSpeed = dirAndSpeed | speedByte;
 
-    byte cmmd = 0xfd; //Kommande festlegen
+    byte cmmd = 0xfd; //Kommando festlegen
 
     byte s1 = byte(steps>>24); //Number of Pulses part 1, höchstes Byte des Winkels, Bitshift um 24 Stellen 
     byte s2 = byte(steps>>16); //Number of Pulses part 2, zweit höchstes Byte des Winkels, Bitshift um 16 Stellen

@@ -15,6 +15,7 @@ class Motor
         void turn(int dir, int speed);
         void turnSteps(int dir, int speed, long steps);
     private:
+        byte motorAddr;
 
 };
 
