@@ -52,6 +52,7 @@ Tower::Tower()
 {
     //Enable serial connection with motor
     Serial1.begin(38400);
+    //Serial.begin(9600);
 
     pinMode(pinEndschalterTurn, INPUT);   
 }
@@ -94,6 +95,7 @@ void Tower::turn(int direction, float angle, int speed)
 
 void Tower::turnW(int direction, int& condition1, int speed)
 {
+    refreshInputs();
     motorV.turn(direction, speed);
     while(condition1 == 0)
     {
@@ -121,12 +123,12 @@ void Tower::tilt(int direction, int angle, int speed)
 
 void Tower::tiltW(int direction, int& condition2, int speed)
 {
+    refreshInputs();
     motorH.turn(direction, speed);
     while(condition2 == 0)
     {
         refreshInputs();
     } 
-
     motorH.stop();
     delay(1000);
 }
@@ -139,7 +141,7 @@ void Tower::angleToStep(int angleS)
 void Tower::homeTurn()
 {
     turnW(0, StatusEndschalterTurn, 10);
-    turn(1, 10, 10);
+    turn(1, 45, 10);
     turnW(0, StatusEndschalterTurn, 2);
     tiltW(1, StatusEndschalterTiltO, 10);
     tilt(0, 10, 15);
@@ -147,6 +149,8 @@ void Tower::homeTurn()
 
     turn(1, 180, 15);
     tilt(0, 90, 15);
+    motorH.setZero();
+    motorV.setZero();
     
 }
 

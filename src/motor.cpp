@@ -82,3 +82,24 @@ void Motor::turnSteps(int dir, int speed, long steps)
 
     Serial1.write(signal, sizeof(signal));
 }
+
+void Motor::setZero()
+{
+    byte cmmd = 0x90;
+    byte tCHK = (motorAddr + cmmd + 0x01) & 0xFF; //Checkbyte 
+    byte signalSetZeroMode[] = {motorAddr, cmmd, 0x00, tCHK};
+
+    Serial1.write(signalSetZeroMode, sizeof(signalSetZeroMode));
+
+    cmmd = 0x91;
+    tCHK = (motorAddr + cmmd + 0x00) & 0xFF; //Checkbyte 
+    byte signalSetZero[] = {motorAddr, cmmd, 0x00, tCHK};
+
+    Serial1.write(signalSetZero, sizeof(signalSetZero));
+
+    cmmd = 0x90;
+    tCHK = (motorAddr + cmmd + 0x00) & 0xFF; //Checkbyte 
+    byte signalResetZeroMode[] = {motorAddr, cmmd, 0x00, tCHK};
+
+    Serial1.write(signalResetZeroMode, sizeof(signalResetZeroMode));
+}
