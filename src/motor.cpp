@@ -103,3 +103,18 @@ void Motor::setZero()
 
     Serial1.write(signalResetZeroMode, sizeof(signalResetZeroMode));
 }
+
+double Motor::angle()
+{
+    byte cmmd = 0x36;
+    byte tCHK = (motorAddr + cmmd) & 0xFF; //Checkbyte 
+    byte signalSetZeroMode[] = {motorAddr, cmmd, tCHK};
+
+    Serial1.write(signalSetZeroMode, sizeof(signalSetZeroMode));
+    byte message = Serial1.read();
+    int winkel;
+    winkel = 0;
+
+    Serial.println(message);
+    return message;
+}

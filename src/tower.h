@@ -17,6 +17,7 @@ class Tower
         void tiltW(int direction, int& condition2, int speed);
         void homeTurn();
         
+        
     private:
         void angleToStep(int angleS);
         

@@ -55,6 +55,7 @@ Tower::Tower()
     //Serial.begin(9600);
 
     pinMode(pinEndschalterTurn, INPUT);   
+    motorH.angle();
 }
 
 void Tower::turn(int direction, float angle, int speed)
