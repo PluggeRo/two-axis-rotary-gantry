@@ -93,9 +93,11 @@ void Tower::turn(int direction, float angle, int speed)
         direction2 = 0;
     }
 
+    //Bewegung Turm
     motorV.turnSteps(direction, speed, stepsM1);
-
+    //Drehung Ausgleich Schneckenrad
     motorH.turnSteps(direction2, speed, stepsM2);
+    
 
     // aktualisieren des absoluten Winkels um die Vertikale Achse Turm
     if(direction == 0)
@@ -185,25 +187,13 @@ void Tower::homeTurn()
     motorH.setZero();
     winkelAchseH = 0;
 
-    Serial.print("WinkelAchseH =");
-    Serial.println(winkelAchseH);
-
-    Serial.print("WinkelAchseV =");
-    Serial.println(winkelAchseV);
-
     turn(0, 180, 15);
     tilt(0, 90, 15); 
 
     turn(1, 10, 15);
     tilt(1, 10, 15);
-    
+
     delay(1000);
-
-    Serial.print("WinkelAchseH =");
-    Serial.println(winkelAchseH);
-
-    Serial.print("WinkelAchseV =");
-    Serial.println(winkelAchseV);
 }
 
 void Tower::refreshInputs()
@@ -211,5 +201,26 @@ void Tower::refreshInputs()
     StatusEndschalterTurn = digitalRead(pinEndschalterTurn);
     StatusEndschalterTiltO = digitalRead(pinEndschalterTiltO);
     StatusEndschalterTiltU = digitalRead(pinEndschalterTiltU);
+}
+
+void Tower::moveTo(int AngleV, int AngleH, int speed)
+{
+    if(winkelAchseV > AngleV)
+    {
+        turn(1, winkelAchseV - AngleV, speed);
+    }
+    else if(winkelAchseV < AngleV)
+    {
+        turn(0, AngleV - winkelAchseV, speed);
+    }
+
+    if(winkelAchseH > AngleH)
+    {
+        tilt(1, winkelAchseH - AngleH, speed);
+    }
+    else if(winkelAchseH < AngleH)
+    {
+        tilt(0, AngleH - winkelAchseH, speed);
+    }
 }
 
