@@ -20,7 +20,7 @@ void setup() {
 
   //tower.turn(01, 180);
   //tower.tilt(00, 90);
-  //tower.homeTurn();
+  tower.homeTurn();
   // initialize the pushbutton pin as an input:
   //pinMode(buttonPin1, INPUT);
   //pinMode(buttonPin2, INPUT);

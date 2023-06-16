@@ -16,6 +16,7 @@ class Motor
         void turnSteps(int dir, int speed, long steps);
         void setZero();
         double angle();
+        byte* readSignal(int expectedBytes);
     private:
         byte motorAddr;
 
