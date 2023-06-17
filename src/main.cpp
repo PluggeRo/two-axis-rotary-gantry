@@ -2,53 +2,114 @@
 
 
 Tower tower;
-//const int buttonPin1 = 52;  // the number of the pushbutton pin cclkw
-//const int buttonPin2 = 50;  // the number of the pushbutton pin clkw
-//const int buttonPin3 = 48;  // the number of the pushbutton pin up
-//const int buttonPin4 = 46;  // the number of the pushbutton pin down
 
-// variables will change:
-//int buttonState1 = 0;  // variable for reading the pushbutton status cclkw
-//int buttonState2 = 0;  // variable for reading the pushbutton status clkw
-//int buttonState3 = 0;  // variable for reading the pushbutton status up
-//int buttonState4 = 0;  // variable for reading the pushbutton status down
+char message[] = {'0','0','0','0','0','0','0','0'};
+String signalRef = "G28";
+String signalVerfVW = "G11";
+String signalVerfVK = "G12";
+String signalVerfHW = "G21";
+String signalVerfHK = "G22";
 
+int i = 0;
+int angle = 0;
+int direction = 0;
 
 void setup() {
   //Kommunikation mit Rechner
   Serial.begin(9600);
+  Serial.flush();
 
-  //tower.turn(01, 180);
-  //tower.tilt(00, 90);
-  tower.homeTurn();
+  //tower.homeTurn();
   delay(5000);
-  tower.moveTo(45, 45, 15);
+  //tower.moveTo(45, 45, 15);
 }
 
-void loop() {
-  /* 
-  buttonState1 = digitalRead(buttonPin1);
-  buttonState2 = digitalRead(buttonPin2);
-  buttonState3 = digitalRead(buttonPin3);
-  buttonState4 = digitalRead(buttonPin4);
+void loop() 
+{
+  i = 0;
+  while(Serial.available() > 0 && i<8)
+  {
+    message[i] = Serial.read();
+    i++;
+  }
+  Serial.flush();
+  if(message[0] == 'G')
+  {
+    for(int x=0; x<=7; x++)
+    {
+      Serial.println(message[x]);
+      Serial.println('t');
+    }
+    tower.homeTurn();
+    message[0] = '0';
+  }
 
-  if(buttonState1 == HIGH)
+  Serial.flush();
+  /*
+  //verarbeiten der aufgenommenen Nachricht
+  
+  if(message[0] = 'G') //Beginnt Nachricht mit G ansonsten nichts
   {
-    tower.turn(00, 20);
-  }
-  if(buttonState2 == HIGH)
-  {
-    tower.turn(01, 20);
-  }
-  if(buttonState3 == HIGH)
-  {
-    tower.tilt(01, 10);
-  }
-  if(buttonState4 == HIGH)
-  {
-    tower.tilt(00, 10);
+    //übergebener Winkel auslesen
+    for(int x = 5; x <= 7; x++ )
+    {
+      angle = (message[x] - '0') + (angle * 10);
+    }
+    switch(message[1]) //zweite Stelle der Nachricht überprüfen
+    {
+      case '1': // message[1] = 1 vertikales verfahren
+        switch(message[2])// Überprüfung der Art des vertikalen verfahrens
+        {
+          case '1': //message[2] = 1 inkremental verfahren nach Winkel
+            //bestimmung der Richtung
+            if(message[4] == '-')
+            {
+              direction = 1;
+            }
+            else
+            {
+              direction = 0;
+            }
+            tower.turn(direction, angle, 15);
+
+            break;
+          case '2': //message[2] = 2 absolut verfahren zu Winkel Koordinate
+            break;
+          default:
+
+        }
+
+        break;
+      case '2':// message[1] = 2 horizontales verfahren oder Referenzfahrt
+        switch(message[2])// Überprüfung der Art des horizontalen verfahrens oder Referenzfahrt
+        {
+          case '1': //message[2] = 1 inkremental verfahren nach Winkel
+            //bestimmung der Richtung
+            if(message[4] == '-')
+            {
+              direction = 1;
+            }
+            else
+            {
+              direction = 0;
+            }
+            tower.tilt(direction, angle, 15);
+
+            break;
+          case '2': //message[2] = 2 absolut verfahren zu Winkel Koordinate
+            break;
+
+          case '8': //message[2] = 8 Referenzfahrt
+            tower.homeTurn;
+            break;
+          default:
+
+        }
+
+        break;
+      default:
+
+    }
   }
   */
-
-
 }

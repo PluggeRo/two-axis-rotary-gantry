@@ -108,9 +108,6 @@ void Tower::turn(int direction, float angle, int speed)
     {
         winkelAchseV = winkelAchseV - angle;
     }
-    
-    delay(1000); // adjust delay based on your motor's speed
-
 }
 
 void Tower::turnW(int direction, int& condition1, int speed)
@@ -122,7 +119,6 @@ void Tower::turnW(int direction, int& condition1, int speed)
         refreshInputs();
     } 
     motorV.stop();
-    delay(1000);
 }
 
 /// @brief Zeiger dreht um horizontale Achse um angegebenen Winkel
@@ -150,8 +146,6 @@ void Tower::tilt(int direction, int angle, int speed)
     {
         winkelAchseH = winkelAchseH - angle;
     }
-
-    delay(1000); // adjust delay based on your motor's speed
     
 }
 
@@ -164,7 +158,6 @@ void Tower::tiltW(int direction, int& condition2, int speed)
         refreshInputs();
     } 
     motorH.stop();
-    delay(1000);
 }
 
 void Tower::angleToStep(int angleS)
@@ -175,7 +168,6 @@ void Tower::angleToStep(int angleS)
 /// @brief Der Turm nullt die Winkel an den Endschalter um den Winkel nur in positiver Richtung zu verfahren und fährt die Homeposition an
 void Tower::homeTurn()
 {
-    delay(1000);
     turnW(1, StatusEndschalterTurn, 10);
     turn(0, 15, 10); //richtung muss 0 sein!!!
     turnW(1, StatusEndschalterTurn, 2);
@@ -190,10 +182,6 @@ void Tower::homeTurn()
     turn(0, 180, 15);
     tilt(0, 90, 15); 
 
-    turn(1, 10, 15);
-    tilt(1, 10, 15);
-
-    delay(1000);
 }
 
 void Tower::refreshInputs()
@@ -203,7 +191,7 @@ void Tower::refreshInputs()
     StatusEndschalterTiltU = digitalRead(pinEndschalterTiltU);
 }
 
-void Tower::moveTo(int AngleV, int AngleH, int speed)
+void Tower::moveToV(int AngleV, int speed)
 {
     if(winkelAchseV > AngleV)
     {
@@ -213,7 +201,10 @@ void Tower::moveTo(int AngleV, int AngleH, int speed)
     {
         turn(0, AngleV - winkelAchseV, speed);
     }
+}
 
+void Tower::moveToH(int AngleH, int speed)
+{
     if(winkelAchseH > AngleH)
     {
         tilt(1, winkelAchseH - AngleH, speed);

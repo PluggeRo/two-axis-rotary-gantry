@@ -153,7 +153,7 @@ byte* Motor::readSignal(int expectedBytes)
 
     // Handle timeout
     if (receivedBytes < expectedBytes) {
-        Serial.println("Failed to receive expected byte response");
+        //Serial.println("Failed to receive expected byte response");
         return error; // return error code or handle as appropriate
     }
 
